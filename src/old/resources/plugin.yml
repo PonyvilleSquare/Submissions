@@ -1,0 +1,18 @@
+name: Submissions
+main: com.brohoof.submissions.SubmissionsPlugin
+version: $version
+author: Ha3
+authors: [Aoloebio, SweetieBelle]
+depend: [PermissionsEx, WorldEdit]
+description: >
+             Submissions plugin.
+permissions:
+    submissions.admin:
+        description: Submissions admin
+        default: op
+commands:
+    subm:
+        description: Submissions commands
+        permission: submissions.admin
+        usage: list() listx() getownerof(plot|location) whereisplot(plot) getplotof(player) release(plot) select(plot [minus]) releaseowner(player) selectowner(player) visualize(plot [minus]) manualrent(plot player) createplot(name+selection) expropriate(plot) reload() addtry(player) gettry(player) expires(player) timeleft(player)
+#

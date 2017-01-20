@@ -1,0 +1,605 @@
+world: submissions2
+permission: submissions.candidate
+interdiction: submissions.legacy
+defaultexpand: 3
+plots:
+  s86:
+    outer: 3
+    ax: 806
+    az: 1218
+    bx: 821
+    bz: 1233
+  s85:
+    outer: 3
+    ax: 796
+    az: 1247
+    bx: 811
+    bz: 1262
+  s84:
+    outer: 3
+    ax: 789
+    az: 1273
+    bx: 804
+    bz: 1288
+  s83:
+    outer: 3
+    ax: 776
+    az: 1311
+    bx: 791
+    bz: 1326
+  s87:
+    outer: 3
+    ax: 801
+    az: 1307
+    bx: 820
+    bz: 1326
+  s88:
+    outer: 3
+    ax: 830
+    az: 1312
+    bx: 847
+    bz: 1329
+  s89:
+    outer: 3
+    ax: 862
+    az: 1316
+    bx: 877
+    bz: 1331
+  s90:
+    outer: 3
+    ax: 886
+    az: 1312
+    bx: 901
+    bz: 1327
+  s91:
+    outer: 3
+    ax: 877
+    az: 1284
+    bx: 896
+    bz: 1303
+  s92:
+    outer: 3
+    ax: 879
+    az: 1252
+    bx: 898
+    bz: 1271
+  s93:
+    outer: 3
+    ax: 872
+    az: 1227
+    bx: 889
+    bz: 1244
+  s94:
+    outer: 3
+    ax: 866
+    az: 1201
+    bx: 881
+    bz: 1216
+  xxsystem1:
+    outer: 3
+    ax: 757
+    az: 1308
+    bx: 763
+    bz: 1314
+  s99:
+    outer: 3
+    ax: 898
+    az: 1203
+    bx: 913
+    bz: 1218
+  s98:
+    outer: 3
+    ax: 899
+    az: 1227
+    bx: 914
+    bz: 1242
+  s97:
+    outer: 3
+    ax: 907
+    az: 1254
+    bx: 926
+    bz: 1273
+  s96:
+    outer: 3
+    ax: 908
+    az: 1285
+    bx: 925
+    bz: 1302
+  s95:
+    outer: 3
+    ax: 913
+    az: 1315
+    bx: 928
+    bz: 1330
+  s53:
+    outer: 3
+    ax: 866
+    az: 808
+    bx: 881
+    bz: 823
+  s46:
+    outer: 3
+    ax: 806
+    az: 825
+    bx: 821
+    bz: 840
+  s45:
+    outer: 3
+    ax: 796
+    az: 854
+    bx: 811
+    bz: 869
+  s44:
+    outer: 3
+    ax: 789
+    az: 880
+    bx: 804
+    bz: 895
+  s2:
+    outer: 3
+    ax: 789
+    az: 1072
+    bx: 804
+    bz: 1087
+  s4:
+    outer: 3
+    ax: 806
+    az: 1017
+    bx: 821
+    bz: 1032
+  s7:
+    outer: 3
+    ax: 862
+    az: 1115
+    bx: 877
+    bz: 1130
+  s8:
+    outer: 3
+    ax: 886
+    az: 1111
+    bx: 901
+    bz: 1126
+  s13:
+    outer: 3
+    ax: 913
+    az: 1114
+    bx: 928
+    bz: 1129
+  s24:
+    outer: 3
+    ax: 984
+    az: 1095
+    bx: 1003
+    bz: 1114
+  s37:
+    outer: 3
+    ax: 1064
+    az: 1021
+    bx: 1081
+    bz: 1038
+  s41:
+    outer: 3
+    ax: 1093
+    az: 1023
+    bx: 1110
+    bz: 1040
+  s40:
+    outer: 3
+    ax: 1099
+    az: 1050
+    bx: 1116
+    bz: 1067
+  s34:
+    outer: 3
+    ax: 1053
+    az: 1107
+    bx: 1070
+    bz: 1124
+  s10:
+    outer: 3
+    ax: 879
+    az: 1051
+    bx: 898
+    bz: 1070
+  s14:
+    outer: 3
+    ax: 908
+    az: 1084
+    bx: 925
+    bz: 1101
+  s11:
+    outer: 3
+    ax: 872
+    az: 1026
+    bx: 889
+    bz: 1043
+  s15:
+    outer: 3
+    ax: 907
+    az: 1053
+    bx: 926
+    bz: 1072
+  s64:
+    outer: 3
+    ax: 957
+    az: 818
+    bx: 974
+    bz: 835
+  s67:
+    outer: 3
+    ax: 984
+    az: 822
+    bx: 999
+    bz: 837
+  s72:
+    outer: 3
+    ax: 1009
+    az: 823
+    bx: 1028
+    bz: 842
+  s59:
+    outer: 3
+    ax: 946
+    az: 925
+    bx: 961
+    bz: 940
+  s55:
+    outer: 3
+    ax: 908
+    az: 892
+    bx: 925
+    bz: 909
+  s50:
+    outer: 3
+    ax: 877
+    az: 891
+    bx: 896
+    bz: 910
+  s71:
+    outer: 3
+    ax: 1001
+    az: 852
+    bx: 1018
+    bz: 869
+  s57:
+    outer: 3
+    ax: 899
+    az: 834
+    bx: 914
+    bz: 849
+  s62:
+    outer: 3
+    ax: 928
+    az: 811
+    bx: 945
+    bz: 828
+  s29:
+    outer: 3
+    ax: 1005
+    az: 1072
+    bx: 1020
+    bz: 1087
+  s26:
+    outer: 3
+    ax: 984
+    az: 1014
+    bx: 999
+    bz: 1029
+  s30:
+    outer: 3
+    ax: 1001
+    az: 1044
+    bx: 1018
+    bz: 1061
+  s54:
+    outer: 3
+    ax: 913
+    az: 922
+    bx: 928
+    bz: 937
+  s32:
+    outer: 3
+    ax: 1032
+    az: 1076
+    bx: 1051
+    bz: 1095
+  s80:
+    outer: 3
+    ax: 1104
+    az: 889
+    bx: 1123
+    bz: 908
+  s76:
+    outer: 3
+    ax: 1069
+    az: 887
+    bx: 1086
+    bz: 904
+  s75:
+    outer: 3
+    ax: 1053
+    az: 915
+    bx: 1070
+    bz: 932
+  s82:
+    outer: 3
+    ax: 1093
+    az: 831
+    bx: 1110
+    bz: 848
+  s9:
+    outer: 3
+    ax: 877
+    az: 1083
+    bx: 896
+    bz: 1102
+  s47:
+    outer: 3
+    ax: 830
+    az: 919
+    bx: 847
+    bz: 936
+  s49:
+    outer: 3
+    ax: 886
+    az: 919
+    bx: 901
+    bz: 934
+  s28:
+    outer: 3
+    ax: 1016
+    az: 1101
+    bx: 1031
+    bz: 1116
+  s63:
+    outer: 3
+    ax: 956
+    az: 880
+    bx: 971
+    bz: 895
+  s60:
+    outer: 3
+    ax: 936
+    az: 900
+    bx: 951
+    bz: 915
+  s73:
+    outer: 3
+    ax: 1032
+    az: 884
+    bx: 1051
+    bz: 903
+  s69:
+    outer: 3
+    ax: 1016
+    az: 909
+    bx: 1031
+    bz: 924
+  s65:
+    outer: 3
+    ax: 984
+    az: 903
+    bx: 1003
+    bz: 922
+  s61:
+    outer: 3
+    ax: 934
+    az: 868
+    bx: 949
+    bz: 883
+  s56:
+    outer: 3
+    ax: 907
+    az: 861
+    bx: 926
+    bz: 880
+  s12:
+    outer: 3
+    ax: 866
+    az: 1000
+    bx: 881
+    bz: 1015
+  s17:
+    outer: 3
+    ax: 898
+    az: 1002
+    bx: 913
+    bz: 1017
+  s36:
+    outer: 3
+    ax: 1065
+    az: 1047
+    bx: 1082
+    bz: 1064
+  s18:
+    outer: 3
+    ax: 946
+    az: 1117
+    bx: 961
+    bz: 1132
+  s19:
+    outer: 3
+    ax: 936
+    az: 1092
+    bx: 951
+    bz: 1107
+  s79:
+    outer: 3
+    ax: 1085
+    az: 916
+    bx: 1102
+    bz: 933
+  s81:
+    outer: 3
+    ax: 1099
+    az: 858
+    bx: 1116
+    bz: 875
+  s3:
+    outer: 3
+    ax: 796
+    az: 1046
+    bx: 811
+    bz: 1061
+  s66:
+    outer: 3
+    ax: 973
+    az: 845
+    bx: 992
+    bz: 864
+  s70:
+    outer: 3
+    ax: 1005
+    az: 880
+    bx: 1020
+    bz: 895
+  s74:
+    outer: 3
+    ax: 1034
+    az: 854
+    bx: 1049
+    bz: 869
+  s58:
+    outer: 3
+    ax: 898
+    az: 810
+    bx: 913
+    bz: 825
+  s78:
+    outer: 3
+    ax: 1064
+    az: 829
+    bx: 1081
+    bz: 846
+  s6:
+    outer: 3
+    ax: 830
+    az: 1111
+    bx: 847
+    bz: 1128
+  s22:
+    outer: 3
+    ax: 956
+    az: 1072
+    bx: 971
+    bz: 1087
+  s31:
+    outer: 3
+    ax: 1009
+    az: 1015
+    bx: 1028
+    bz: 1034
+  s20:
+    outer: 3
+    ax: 934
+    az: 1060
+    bx: 949
+    bz: 1075
+  s16:
+    outer: 3
+    ax: 899
+    az: 1026
+    bx: 914
+    bz: 1041
+  s51:
+    outer: 3
+    ax: 879
+    az: 859
+    bx: 898
+    bz: 878
+  s25:
+    outer: 3
+    ax: 973
+    az: 1037
+    bx: 992
+    bz: 1056
+  s35:
+    outer: 3
+    ax: 1069
+    az: 1079
+    bx: 1086
+    bz: 1096
+  s38:
+    outer: 3
+    ax: 1085
+    az: 1108
+    bx: 1102
+    bz: 1125
+  s48:
+    outer: 3
+    ax: 862
+    az: 923
+    bx: 877
+    bz: 938
+  s43:
+    outer: 3
+    ax: 801
+    az: 914
+    bx: 820
+    bz: 933
+  s52:
+    outer: 3
+    ax: 872
+    az: 834
+    bx: 889
+    bz: 851
+  s1:
+    outer: 3
+    ax: 776
+    az: 1110
+    bx: 791
+    bz: 1125
+  s23:
+    outer: 3
+    ax: 957
+    az: 1010
+    bx: 974
+    bz: 1027
+  s33:
+    outer: 3
+    ax: 1034
+    az: 1046
+    bx: 1049
+    bz: 1061
+  s39:
+    outer: 3
+    ax: 1104
+    az: 1081
+    bx: 1123
+    bz: 1100
+  s42:
+    outer: 3
+    ax: 776
+    az: 918
+    bx: 791
+    bz: 933
+  s5:
+    outer: 3
+    ax: 801
+    az: 1106
+    bx: 820
+    bz: 1125
+  s77:
+    outer: 3
+    ax: 1065
+    az: 855
+    bx: 1082
+    bz: 872
+  s68:
+    outer: 3
+    ax: 1024
+    az: 937
+    bx: 1039
+    bz: 952
+  s27:
+    outer: 3
+    ax: 1023
+    az: 1130
+    bx: 1038
+    bz: 1145
+  s21:
+    outer: 3
+    ax: 928
+    az: 1003
+    bx: 945
+    bz: 1020
