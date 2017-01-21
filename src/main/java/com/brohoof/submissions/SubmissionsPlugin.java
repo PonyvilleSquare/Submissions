@@ -23,6 +23,7 @@ public class SubmissionsPlugin extends JavaPlugin {
     public void onEnable() {
         eventListener = new EventListener(this);
         getServer().getPluginManager().registerEvents(eventListener, this);
+        this.saveDefaultConfig();
         settings = new Settings(this);
         try {
             Plot.loadPlots(this, getConfig(settings.getPlotFileName()));
