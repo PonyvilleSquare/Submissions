@@ -98,6 +98,7 @@ public class Plot {
                 if (plot.isIn(locInExisting))
                     throw new PlotCreationException("A part of this plot is already in use by " + existing.getValue().name);
         }
+        plots.put(name, plot);
         savePlot(plot);
         return plot;
     }
