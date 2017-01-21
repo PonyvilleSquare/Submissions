@@ -12,8 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.brohoof.submissions.exceptions.PlotLoadException;
 
 public class SubmissionsPlugin extends JavaPlugin {
-    
-    
+
     private EventListener eventListener;
     private Settings settings;
     private BukkitTask task;
@@ -37,16 +36,17 @@ public class SubmissionsPlugin extends JavaPlugin {
         }, settings.getSaveInterval(), settings.getSaveInterval());
         commandHandler = new CommandHandler();
     }
-    
+
     @Override
     public void onDisable() {
         task.cancel();
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return commandHandler.onCommand(sender, command, label, args);
     }
+
     /**
      * Gets a {@link FileConfiguration} for this plugin, read through the argument.
      * <p>

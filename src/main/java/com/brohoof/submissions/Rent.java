@@ -127,9 +127,9 @@ public class Rent {
             plugin.getLogger().log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void saveAllRents() {
-        for(Entry<UUID, Rent> rent : Rent.rents.entrySet())
+        for (Entry<UUID, Rent> rent : Rent.rents.entrySet())
             saveRent(rent.getValue());
     }
 }

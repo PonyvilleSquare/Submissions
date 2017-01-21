@@ -67,7 +67,7 @@ public class Plot {
         Plot.plugin = plugin;
         plotsConfig = plots;
         Optional<World> oWorld = Optional.<World>ofNullable(Bukkit.getWorld(plots.getString("world")));
-        if(!oWorld.isPresent())
+        if (!oWorld.isPresent())
             throw new PlotLoadException("Cannot load plots, since " + plots.getString("world") + " isn't loaded.");
         world = oWorld.get();
         if (plots.getConfigurationSection("plots") == null)

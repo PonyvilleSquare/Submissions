@@ -97,7 +97,7 @@ public class CommandHandler {
                             sender.sendMessage("Ingame only command.");
                             return true;
                         }
-                        if(args.length == 0) {
+                        if (args.length == 0) {
                             sender.sendMessage("You must put a name for this plot!");
                         }
                         Player player = (Player) sender;
@@ -117,10 +117,10 @@ public class CommandHandler {
                             sender.sendMessage("Error creating plot: " + e.getMessage());
                             return true;
                         }
-                        for(BlockVector bv : re) {
+                        for (BlockVector bv : re) {
                             final Location bLocation = new Location(player.getWorld(), bv.getX(), bv.getY(), bv.getZ());
                             Block b = bLocation.getBlock();
-                            if(b.getType() == Material.WOOL && b.getTypeId() == 11) {
+                            if (b.getType() == Material.WOOL && b.getTypeId() == 11) {
                                 b.setTypeId(4);
                             }
                         }
