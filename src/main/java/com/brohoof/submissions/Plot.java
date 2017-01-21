@@ -93,6 +93,11 @@ public class Plot {
         if (plots.containsKey(name))
             throw new PlotCreationException("The name " + name + " is already in use.");
         Plot plot = new Plot(name, point1, point2);
+        for (Entry<String, Plot> existing : plots.entrySet()) {
+            for (Location locInExisting : existing.getValue().plot.getCuboid(world))
+                if (plot.isIn(locInExisting))
+                    throw new PlotCreationException("A part of this plot is already in use by " + existing.getValue().name);
+        }
         savePlot(plot);
         return plot;
     }
