@@ -97,7 +97,7 @@ public class CommandHandler {
                             sender.sendMessage("Ingame only command.");
                             return true;
                         }
-                        if (args.length == 0) {
+                        if (args.length <= 1) {
                             sender.sendMessage("You must put a name for this plot!");
                         }
                         Player player = (Player) sender;
@@ -112,7 +112,7 @@ public class CommandHandler {
                         Vector point1 = re.getMinimumPoint();
                         Vector point2 = re.getMaximumPoint();
                         try {
-                            Plot.createPlot(args[0].toLowerCase(), new Location(player.getWorld(), point1.getBlockX(), point1.getBlockY(), point1.getBlockZ()), new Location(player.getWorld(), point2.getBlockX(), point2.getBlockY(), point2.getBlockZ()));
+                            Plot.createPlot(args[1].toLowerCase(), new Location(player.getWorld(), point1.getBlockX(), point1.getBlockY(), point1.getBlockZ()), new Location(player.getWorld(), point2.getBlockX(), point2.getBlockY(), point2.getBlockZ()));
                         } catch (PlotCreationException e) {
                             sender.sendMessage("Error creating plot: " + e.getMessage());
                             return true;
@@ -120,11 +120,12 @@ public class CommandHandler {
                         for (BlockVector bv : re) {
                             final Location bLocation = new Location(player.getWorld(), bv.getX(), bv.getY(), bv.getZ());
                             Block b = bLocation.getBlock();
-                            if (b.getType() == Material.WOOL && b.getTypeId() == 11) {
-                                b.setTypeId(4);
+                            if (b.getType() == Material.WOOL && b.getData() == ((byte) 11)) {
+                                b.setData((byte) 4);
                             }
                         }
                         sender.sendMessage("Plot created!");
+                        return true;
                     }
                     case "reload": {
 
