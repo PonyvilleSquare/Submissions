@@ -70,6 +70,9 @@ public class Plot {
         if(!oWorld.isPresent())
             throw new PlotLoadException("Cannot load plots, since " + plots.getString("world") + " isn't loaded.");
         world = oWorld.get();
+        if (plots.getConfigurationSection("plots") == null)
+            // No plots to load
+            return;
         for (String plotName : plots.getConfigurationSection("plots").getKeys(false)) {
             ConfigurationSection plot = plots.getConfigurationSection(plotName);
             int x1 = plot.getInt("x1");
