@@ -7,14 +7,20 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.brohoof.submissions.exceptions.PlotCreationException;
+import com.brohoof.submissions.exceptions.PlotLoadException;
 
 public class Plot {
 
     private static YamlConfiguration plotsConfig;
     private static SubmissionsPlugin plugin;
+    private static World world;
     private String name;
     private WorldlessCuboid plot;
     private static final HashMap<String, Plot> plots = new HashMap<String, Plot>(0);
@@ -34,7 +40,7 @@ public class Plot {
     }
 
     public Plot(String name, int x1, int y1, int z1, int x2, int y2, int z2) {
-        this(name, new Location(null, x1, y1, z1), new Location(null, x2, y2, z2));
+        this(name, new Location(world, x1, y1, z1), new Location(world, x2, y2, z2));
     }
 
     public String getName() {
@@ -44,22 +50,27 @@ public class Plot {
     public boolean isIn(Location point) {
         return plot.isIn(point);
     }
+
     public WorldlessCuboid getPlot() {
         return plot;
     }
 
     public Location getPoint1() {
-        return new Location(null, plot.xMin, plot.yMin, plot.zMin);
+        return new Location(world, plot.xMin, plot.yMin, plot.zMin);
     }
 
     public Location getPoint2() {
-        return new Location(null, plot.xMax, plot.yMax, plot.zMax);
+        return new Location(world, plot.xMax, plot.yMax, plot.zMax);
     }
 
-    public static void loadPlots(SubmissionsPlugin plugin, YamlConfiguration plots) {
+    public static void loadPlots(SubmissionsPlugin plugin, YamlConfiguration plots) throws PlotLoadException {
         Plot.plugin = plugin;
         plotsConfig = plots;
-        for (String plotName : plots.getKeys(false)) {
+        Optional<World> oWorld = Optional.<World>ofNullable(Bukkit.getWorld(plots.getString("world")));
+        if(!oWorld.isPresent())
+            throw new PlotLoadException("Cannot load plots, since " + plots.getString("world") + " isn't loaded.");
+        world = oWorld.get();
+        for (String plotName : plots.getConfigurationSection("plots").getKeys(false)) {
             ConfigurationSection plot = plots.getConfigurationSection(plotName);
             int x1 = plot.getInt("x1");
             int y1 = plot.getInt("y1");
@@ -85,7 +96,7 @@ public class Plot {
 
     public static void savePlot(Plot plot) {
         try {
-            ConfigurationSection section = plotsConfig.createSection(plot.getName());
+            ConfigurationSection section = plotsConfig.createSection("plots." + plot.getName());
             section.set("x1", plot.plot.xMin);
             section.set("y1", plot.plot.yMin);
             section.set("z1", plot.plot.zMin);
@@ -97,7 +108,7 @@ public class Plot {
             plugin.getLogger().log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void deletePlot(Plot plot) {
         try {
             Plot.plots.remove(plot.name);
@@ -107,9 +118,9 @@ public class Plot {
             plugin.getLogger().log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void saveAllPlots() {
-        for(Entry<String, Plot> plot : Plot.plots.entrySet())
+        for (Entry<String, Plot> plot : Plot.plots.entrySet())
             savePlot(plot.getValue());
     }
 }

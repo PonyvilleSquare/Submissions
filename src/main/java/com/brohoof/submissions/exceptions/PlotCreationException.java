@@ -1,4 +1,4 @@
-package com.brohoof.submissions;
+package com.brohoof.submissions.exceptions;
 
 public class PlotCreationException extends Exception {
 

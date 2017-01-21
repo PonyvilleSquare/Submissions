@@ -74,7 +74,7 @@ public class Rent {
     public static void loadRents(SubmissionsPlugin plugin, YamlConfiguration rents) {
         Rent.plugin = plugin;
         rentsConfig = rents;
-        for (String rentName : rents.getKeys(false)) {
+        for (String rentName : rents.getConfigurationSection("rents").getKeys(false)) {
             ConfigurationSection rent = rents.getConfigurationSection(rentName);
             UUID owner = UUID.fromString(rent.getString("owner"));
             String ownerName = rent.getString("ownerName");
@@ -106,7 +106,7 @@ public class Rent {
 
     public static void saveRent(Rent rent) {
         try {
-            ConfigurationSection rentCnf = rentsConfig.getConfigurationSection(rent.plot.getName());
+            ConfigurationSection rentCnf = rentsConfig.getConfigurationSection("rents." + rent.plot.getName());
             rentCnf.set("owner", rent.owner.toString());
             rentCnf.set("ownerName", rent.ownerName);
             rentCnf.set("changes", rent.changes);

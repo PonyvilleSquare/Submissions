@@ -9,6 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.brohoof.submissions.exceptions.PlotLoadException;
+
 public class SubmissionsPlugin extends JavaPlugin {
     
     
@@ -22,7 +24,11 @@ public class SubmissionsPlugin extends JavaPlugin {
         eventListener = new EventListener(this);
         getServer().getPluginManager().registerEvents(eventListener, this);
         settings = new Settings(this);
-        Plot.loadPlots(this, getConfig(settings.getPlotFileName()));
+        try {
+            Plot.loadPlots(this, getConfig(settings.getPlotFileName()));
+        } catch (PlotLoadException e) {
+            e.printStackTrace();
+        }
         Rent.loadRents(this, getConfig(settings.getRentFileName()));
         task = getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             Plot.saveAllPlots();

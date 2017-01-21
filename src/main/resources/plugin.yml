@@ -1,8 +1,8 @@
 name: Submissions
 main: com.brohoof.submissions.SubmissionsPlugin
 version: $version
-author: Ha3
-authors: [Aoloebio, SweetieBelle]
+author: SweetieBelle
+authors: [Aoloebio, Ha3]
 depend: [PermissionsEx, WorldEdit]
 description: >
              Submissions plugin.
@@ -14,5 +14,8 @@ commands:
     subm:
         description: Submissions commands
         permission: submissions.admin
-        usage: list() listx() getownerof(plot|location) whereisplot(plot) getplotof(player) release(plot) select(plot [minus]) releaseowner(player) selectowner(player) visualize(plot [minus]) manualrent(plot player) createplot(name+selection) expropriate(plot) reload() addtry(player) gettry(player) expires(player) timeleft(player)
-#
+        usage: list() listx() getownerof(plot|location) whereisplot(plot) getplotof(player) release(plot) select(plot [minus]) releaseowner(player) selectowner(player) visualize(plot [minus]) manualrent(plot player) createplot(name+selection) reload() addtry(player) gettry(player) expires(player) timeleft(player)
+    saveandremove:
+        description: Saves and removes the given plot
+        permission: submissions.admin
+        usage: /<command> cmcToRemove
