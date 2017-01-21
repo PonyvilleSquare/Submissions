@@ -74,6 +74,9 @@ public class Rent {
     public static void loadRents(SubmissionsPlugin plugin, YamlConfiguration rents) {
         Rent.plugin = plugin;
         rentsConfig = rents;
+        if (rents.getConfigurationSection("rents") == null)
+            // No plots to load
+            return;
         for (String rentName : rents.getConfigurationSection("rents").getKeys(false)) {
             ConfigurationSection rent = rents.getConfigurationSection(rentName);
             UUID owner = UUID.fromString(rent.getString("owner"));
