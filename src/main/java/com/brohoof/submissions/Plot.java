@@ -74,7 +74,7 @@ public class Plot {
             // No plots to load
             return;
         for (String plotName : plots.getConfigurationSection("plots").getKeys(false)) {
-            ConfigurationSection plot = plots.getConfigurationSection(plotName);
+            ConfigurationSection plot = plots.getConfigurationSection("plots." + plotName);
             int x1 = plot.getInt("x1");
             int y1 = plot.getInt("y1");
             int z1 = plot.getInt("z1");

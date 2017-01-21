@@ -78,7 +78,7 @@ public class Rent {
             // No plots to load
             return;
         for (String rentName : rents.getConfigurationSection("rents").getKeys(false)) {
-            ConfigurationSection rent = rents.getConfigurationSection(rentName);
+            ConfigurationSection rent = rents.getConfigurationSection("rents." + rentName);
             UUID owner = UUID.fromString(rent.getString("owner"));
             String ownerName = rent.getString("ownerName");
             int changes = rent.getInt("changes");
