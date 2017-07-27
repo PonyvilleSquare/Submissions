@@ -44,6 +44,8 @@ public class SubmissionsPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         task.cancel();
+        plotManager.saveAllPlots();
+        rentManager.saveAllRents();
     }
 
     @Override

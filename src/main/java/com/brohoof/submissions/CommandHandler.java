@@ -35,15 +35,6 @@ public class CommandHandler {
         this.permission = permission;
     }
 
-    private Optional<Region> getWorldEditSelection(final Player player) {
-        final WorldEditPlugin we = SubmissionsPlugin.getWorldEdit();
-        try {
-            return Optional.<Region>ofNullable(we.getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player)).getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld())).getRegion());
-        } catch (final Exception e) {
-            return Optional.<Region>empty();
-        }
-    }
-
     @SuppressWarnings("deprecation")
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
@@ -74,6 +65,11 @@ public class CommandHandler {
                 if (args.length == 0)
                     return false;
                 switch (args[0].toLowerCase()) {
+                    case "save": {
+                        plotManager.saveAllPlots();
+                        rentManager.saveAllRents();
+                        return true;
+                    }
                     case "dump": {
                         plotManager.dumpPlots();
                         rentManager.dumpRents();
@@ -242,7 +238,7 @@ public class CommandHandler {
                             player.sendMessage(String.format(ChatColor.GOLD + "Cannot reserve: Plot %s is already owned by %s", plot.getName(), rent.getOwnerName()));
                             return true;
                         }
-                        rentManager.createRent(plot, player);
+                        rentManager.createRent(plot, target);
                         return true;
                     }
                     case "createplot": {
@@ -278,8 +274,8 @@ public class CommandHandler {
                             return false;
                         final Player target = getPlayer(args[1]);
                         if (target != null) {
-                            final int tries = permission.addTry(player);
-                            player.sendMessage(ChatColor.YELLOW + player.getName() + " has now taken " + tries + " attempt(s) at submissions.");
+                            final int tries = permission.addTry(target);
+                            player.sendMessage(ChatColor.YELLOW + target.getName() + " has now taken " + tries + " attempt(s) at submissions.");
                             return true;
                         }
                         final int tries = permission.addTry(args[1]);
@@ -346,6 +342,15 @@ public class CommandHandler {
         return null;
     }
 
+    private Optional<Region> getWorldEditSelection(final Player player) {
+        final WorldEditPlugin we = SubmissionsPlugin.getWorldEdit();
+        try {
+            return Optional.<Region>ofNullable(we.getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player)).getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld())).getRegion());
+        } catch (final Exception e) {
+            return Optional.<Region>empty();
+        }
+    }
+
     private void setWorldEditSelection(final Player ply, final Plot plot) {
         final org.bukkit.World plotWorld = plotManager.getWorld();
         SubmissionsPlugin.getWorldEdit().setSelection(ply, new CuboidSelection(plotWorld, plot.getFirstPoint(), plot.getSecondPoint()));
@@ -353,11 +358,11 @@ public class CommandHandler {
 
     private void displayRentInfo(final Player toSend, final Rent rent) {
         final String plot = rent.getPlot().getName();
-        final Player owner = Bukkit.getPlayer(rent.getOwner());
+        final String owner = Bukkit.getOfflinePlayer(rent.getOwner()).getName();
         final String created = permission.getTimeStamp(rent.getCreated() / 1000);
         final String modified = permission.getTimeStamp(rent.getModified() / 1000);
         final String changes = "" + rent.getChanges();
-        final String playerDisplay = ChatColor.translateAlternateColorCodes('&', permission.getPrefix(owner) + owner.getName() + permission.getSuffix(owner));
+        final String playerDisplay = ChatColor.translateAlternateColorCodes('&', permission.getPrefix(owner) + owner + permission.getSuffix(owner));
         toSend.sendMessage(String.format(ChatColor.RESET + "%s: %s" + ChatColor.RESET + "(created %s, modified %s, %s changes)", plot, playerDisplay, created, modified, changes));
     }
 

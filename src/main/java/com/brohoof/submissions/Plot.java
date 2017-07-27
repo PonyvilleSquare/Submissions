@@ -32,6 +32,11 @@ public class Plot implements Comparable<Plot> {
         final Plot plot = (Plot) obj;
         return name.equals(plot.name);
     }
+    
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
     @Override
     public int compareTo(final Plot o) {
         return name.compareTo(o.name);

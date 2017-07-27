@@ -103,8 +103,7 @@ public class EventListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-        } else
-            rentofPlayer.get().incrementChanges();// Authorized
+        }
         // bonemeal check
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
             if (player.getItemInHand().getTypeId() == 351)
@@ -174,7 +173,7 @@ public class EventListener implements Listener {
         }
         final Plot boundedPlot = plot.get();
         // Player has no rent
-        final Optional<Rent> rentOfOther = rentManager.getRent(boundedPlot.getName());
+        final Optional<Rent> rentOfOther = rentManager.getRent(boundedPlot);
         if (rentOfOther.isPresent()) {
             // Plot is already rented
             player.sendMessage(ChatColor.GOLD + "This plot is already taken. " + ChatColor.WHITE + "Find another empty plot.");

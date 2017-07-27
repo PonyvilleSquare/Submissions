@@ -23,6 +23,37 @@ public class Rent implements Comparable<Rent> {
         this.created = created;
         this.modified = modified;
     }
+    
+    
+    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((plot == null) ? 0 : plot.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Rent other = (Rent) obj;
+        if (plot == null) {
+            if (other.plot != null)
+                return false;
+        } else if (!plot.equals(other.plot))
+            return false;
+        return true;
+    }
+
+
+
 
     @Override
     public String toString() {
