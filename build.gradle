@@ -26,7 +26,7 @@ repositories {
 	}
 }
 dependencies {
-	compile 'org.bukkit:bukkit:1.11.2-R0.1-SNAPSHOT'
+	compile 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
 	compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
 	compile 'net.milkbowl.vault:VaultAPI:1.6'
 	compile 'com.sk89q.worldedit:worldedit-bukkit:6.1.5'

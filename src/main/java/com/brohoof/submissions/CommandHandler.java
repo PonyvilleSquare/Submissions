@@ -1,7 +1,10 @@
 package com.brohoof.submissions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,143 +12,353 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.brohoof.submissions.exceptions.PlotCreationException;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.regions.RegionSelector;
-import com.sk89q.worldedit.regions.selector.limit.PermissiveSelectorLimits;
 import com.sk89q.worldedit.world.World;
 
 public class CommandHandler {
 
-    public CommandHandler() {
-        // TODO Auto-generated constructor stub
+    private final PlotManager plotManager;
+    private final RentManager rentManager;
+    private final Permission permission;
+
+    public CommandHandler(final PlotManager plotManager, final RentManager rentManager, final Permission permission) {
+        this.plotManager = plotManager;
+        this.rentManager = rentManager;
+        this.permission = permission;
+    }
+
+    private Optional<Region> getWorldEditSelection(final Player player) {
+        final WorldEditPlugin we = SubmissionsPlugin.getWorldEdit();
+        try {
+            return Optional.<Region>ofNullable(we.getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player)).getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld())).getRegion());
+        } catch (final Exception e) {
+            return Optional.<Region>empty();
+        }
     }
 
     @SuppressWarnings("deprecation")
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Sorry, this plugin can be used ingame only.");
+            return true;
+        }
+        final Player player = (Player) sender;
         switch (command.getName().toLowerCase()) {
             case "saveandremove": {
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage("Ingame only command.");
-                    return true;
-                }
                 if (args.length == 0)
                     return false;
-                Player player = (Player) sender;
-                String all_error = ChatColor.RED + "" + ChatColor.BOLD + "[FATAL]" + ChatColor.RESET + ChatColor.RED + "Save and remove of submission house aborted. ";
-                Optional<Rent> oRent = Rent.getRent(args[0]);
+                final String all_error = ChatColor.DARK_RED + "[FATAL]" + ChatColor.RESET + ChatColor.RED + " Save and remove of submission house aborted. ";
+                final Optional<Rent> oRent = rentManager.getRent(args[0]);
                 if (!oRent.isPresent()) {
                     player.sendMessage(all_error + "I couldn't find a rent for that player!");
                     return true;
                 }
-                Rent rent = oRent.get();
-                WorldlessCuboid plot = rent.getPlot().getPlot();
-                final WorldEditPlugin we = JavaPlugin.getPlugin(WorldEditPlugin.class);
-                LocalSession ls = JavaPlugin.getPlugin(WorldEditPlugin.class).getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player));
-                ls.setMask((Mask) null);
-                RegionSelector rs = ls.getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld()));
-                rs.selectPrimary(new Vector(plot.xMin, plot.yMin, plot.zMin), PermissiveSelectorLimits.getInstance());
-                rs.selectSecondary(new Vector(plot.xMax, plot.yMax, plot.zMax), PermissiveSelectorLimits.getInstance());
+                final Rent rent = oRent.get();
+                setWorldEditSelection(player, rent.getPlot());
+                // Sanity checks
+                if (!player.getWorld().equals(plotManager.getWorld())) {
+                    player.sendMessage(all_error + "You are not in the submissions world. Please use this command only in the submissions world.");
+                }
+                player.sendMessage("Your current Location is " + player.getLocation().getY());
+                return true;
             }
             case "subm": {
                 if (args.length == 0)
                     return false;
                 switch (args[0].toLowerCase()) {
-                    case "list": {
-
-                    }
-                    case "listx": {
-
-                    }
-                    case "getownerof": {
-                        // plot|location
-                    }
-                    case "whereisplot": {
-                        // plot
-                    }
-                    case "getplotof": {
-                        // player
-                    }
-                    case "release": {
-                        // plot
-                    }
-                    case "select": {
-                        // plot
-                    }
-                    case "releaseowner": {
-                        // player
-                    }
-                    case "visualize": {
-                        // plot
-                    }
-                    case "manualrent": {
-                        // plot player
-                    }
-                    case "createplot": {
-                        // name + selection
-                        if (!(sender instanceof Player)) {
-                            sender.sendMessage("Ingame only command.");
-                            return true;
-                        }
-                        if (args.length <= 1) {
-                            sender.sendMessage("You must put a name for this plot!");
-                        }
-                        Player player = (Player) sender;
-                        Region re = null;
-                        try {
-                            final WorldEditPlugin we = JavaPlugin.getPlugin(WorldEditPlugin.class);
-                            re = we.getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player)).getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld())).getRegion();
-                        } catch (final IncompleteRegionException e) {
-                            sender.sendMessage(ChatColor.RED + "You must have a WorldEdit selection.");
-                            return true;
-                        }
-                        Vector point1 = re.getMinimumPoint();
-                        Vector point2 = re.getMaximumPoint();
-                        try {
-                            Plot.createPlot(args[1].toLowerCase(), new Location(player.getWorld(), point1.getBlockX(), point1.getBlockY(), point1.getBlockZ()), new Location(player.getWorld(), point2.getBlockX(), point2.getBlockY(), point2.getBlockZ()));
-                        } catch (PlotCreationException e) {
-                            sender.sendMessage("Error creating plot: " + e.getMessage());
-                            return true;
-                        }
-                        for (BlockVector bv : re) {
-                            final Location bLocation = new Location(player.getWorld(), bv.getX(), bv.getY(), bv.getZ());
-                            Block b = bLocation.getBlock();
-                            if (b.getType() == Material.WOOL && b.getData() == ((byte) 11)) {
-                                b.setData((byte) 4);
-                            }
-                        }
-                        sender.sendMessage("Plot created!");
+                    case "dump": {
+                        plotManager.dumpPlots();
+                        rentManager.dumpRents();
+                        player.sendMessage("Check console.");
                         return true;
                     }
-                    case "reload": {
-
+                    case "list": {
+                        player.sendMessage(String.format(ChatColor.YELLOW + "Occupied %s out of %s plots (%s empty)", rentManager.getTotalRents(), plotManager.getTotalPlots(), plotManager.getTotalPlots() - rentManager.getTotalRents()));
+                        final ArrayList<Rent> rents = rentManager.getRents();
+                        Collections.sort(rents);
+                        Collections.reverse(rents);
+                        for (final Rent rent : rents)
+                            displayRentInfo(player, rent);
+                        return true;
+                    }
+                    case "listx": {
+                        final int occupied = rentManager.getTotalRents();
+                        final int numPlots = plotManager.getTotalPlots();
+                        player.sendMessage(String.format(ChatColor.YELLOW + "Occupied %s out of %s open plots (%s empty)", occupied, numPlots, numPlots - occupied));
+                        final ArrayList<Plot> plots = plotManager.getPlots();
+                        Collections.sort(plots);
+                        for (final Plot plot : plots) {
+                            player.sendMessage("Plot number is " + plot.getName());
+                            final Optional<Rent> rent = rentManager.getRent(plot);
+                            if (rent.isPresent())
+                                displayRentInfo(player, rent.get());
+                            else
+                                player.sendMessage(String.format(ChatColor.GRAY + "%s: (empty)", plot.getName()));
+                        }
+                        return true;
+                    }
+                    case "getownerof": {
+                        if (args.length <= 1) {
+                            // no plot name given, so base it off their location
+                            Optional<Plot> oPlot = plotManager.getPlot(player.getLocation());
+                            if (oPlot.isPresent()) {
+                                Plot plot = oPlot.get();
+                                Optional<Rent> oRent = rentManager.getRent(plot);
+                                if (oRent.isPresent()) {
+                                    Rent rent = oRent.get();
+                                    player.sendMessage(String.format(ChatColor.YELLOW + "This plot %s is owned by %s", plot.getName(), rent.getOwnerName()));
+                                    return true;
+                                }
+                                player.sendMessage(String.format(ChatColor.YELLOW + "This plot %s is empty", plot.getName()));
+                                return true;
+                            }
+                            player.sendMessage(String.format(ChatColor.GOLD + "This is not a plot"));
+                            return true;
+                        }
+                        // Name given, use that instead.
+                        Optional<Plot> oPlot = plotManager.getPlot(args[1]);
+                        if (oPlot.isPresent()) {
+                            Plot plot = oPlot.get();
+                            Optional<Rent> oRent = rentManager.getRent(plot);
+                            if (oRent.isPresent()) {
+                                Rent rent = oRent.get();
+                                player.sendMessage(String.format(ChatColor.YELLOW + "That plot %s is owned by %s", plot.getName(), rent.getOwnerName()));
+                                return true;
+                            }
+                            player.sendMessage(String.format(ChatColor.YELLOW + "That plot %s is empty", plot.getName()));
+                            return true;
+                        }
+                        player.sendMessage(String.format(ChatColor.GOLD + "That is not a plot"));
+                        return true;
+                    }
+                    case "whereisplot": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a plot number!");
+                            return true;
+                        }
+                        final Optional<Plot> plot = plotManager.getPlot(args[1]);
+                        if (!plot.isPresent())
+                            player.sendMessage(String.format(ChatColor.GOLD + "That is not a plot"));
+                        else {
+                            Plot pl = plot.get();
+                            player.sendMessage(String.format(ChatColor.YELLOW + "Plot %s is located at %s", pl.getName(), getStringFromLocation(pl.getFirstPoint()) + " -> " + getStringFromLocation(pl.getSecondPoint())));
+                        }
+                        return true;
+                    }
+                    case "getplotof": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a player.");
+                        }
+                        final Optional<Rent> rent = rentManager.getRent(args[1]);
+                        if (!rent.isPresent())
+                            player.sendMessage("This player does not have a plot.");
+                        else {
+                            Rent re = rent.get();
+                            player.sendMessage(String.format(ChatColor.YELLOW + "This plot %s is owned by %s", re.getPlot().getName(), re.getOwnerName()));
+                            displayRentInfo(player, re);
+                        }
+                        return true;
+                    }
+                    case "release": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a plot number!");
+                            return true;
+                        }
+                        Optional<Plot> oPlot = plotManager.getPlot(args[1]);
+                        if (!oPlot.isPresent()) {
+                            player.sendMessage("Invalid plot specified!");
+                            return true;
+                        }
+                        Optional<Rent> oRent = rentManager.getRent(oPlot.get());
+                        if (oRent.isPresent()) {
+                            rentManager.removeRent(oRent.get());
+                            return true;
+                        }
+                        player.sendMessage("That plot does not have a rent!");
+                        return true;
+                    }
+                    case "select": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a plot number!");
+                            return true;
+                        }
+                        final Optional<Plot> op = plotManager.getPlot(args[1]);
+                        if (op.isPresent()) {
+                            setWorldEditSelection(player, op.get());
+                            return true;
+                        }
+                        player.sendMessage("Invalid plot specified!");
+                        return true;
+                    }
+                    case "releaseowner": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a player!");
+                            return true;
+                        }
+                        final String rentOwner = args[1];
+                        final Optional<Rent> or = rentManager.getRent(rentOwner);
+                        if (!or.isPresent()) {
+                            player.sendMessage("Player does not have a plot!");
+                            return true;
+                        }
+                        final Rent rent = or.get();
+                        rentManager.removeRent(rent);
+                        return true;
+                    }
+                    case "visualize": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a plot number!");
+                            return true;
+                        }
+                        final Optional<Plot> op = plotManager.getPlot(args[1]);
+                        if (op.isPresent()) {
+                            setWorldEditSelection(player, op.get());
+                            return true;
+                        }
+                        player.sendMessage("Invalid plot specified!");
+                        return true;
+                    }
+                    case "manualrent": {
+                        final Player target = getPlayer(args[1]);
+                        if (target == null) {
+                            player.sendMessage("Player not found.");
+                            return true;
+                        }
+                        final Optional<Plot> oplot = plotManager.getPlot(args[2]);
+                        if (!oplot.isPresent())
+                            player.sendMessage("Invalid plot specified.");
+                        final Plot plot = oplot.get();
+                        final Optional<Rent> orent = rentManager.getRent(plot);
+                        if (orent.isPresent()) {
+                            final Rent rent = orent.get();
+                            player.sendMessage(String.format(ChatColor.GOLD + "Cannot reserve: Plot %s is already owned by %s", plot.getName(), rent.getOwnerName()));
+                            return true;
+                        }
+                        rentManager.createRent(plot, player);
+                        return true;
+                    }
+                    case "createplot": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must put a name for this plot!");
+                            return true;
+                        }
+                        final Optional<Region> ore = getWorldEditSelection(player);
+                        if (!ore.isPresent()) {
+                            player.sendMessage(ChatColor.RED + "You must have a WorldEdit selection.");
+                            return true;
+                        }
+                        final Region re = ore.get();
+                        final Vector point1 = re.getMinimumPoint();
+                        final Vector point2 = re.getMaximumPoint();
+                        try {
+                            plotManager.createPlot(args[1].toLowerCase(), new Location(player.getWorld(), point1.getBlockX(), point1.getBlockY(), point1.getBlockZ()), new Location(player.getWorld(), point2.getBlockX(), point2.getBlockY(), point2.getBlockZ()));
+                        } catch (final PlotCreationException e) {
+                            player.sendMessage("Error creating plot: " + e.getMessage());
+                            return true;
+                        }
+                        for (final BlockVector bv : re) {
+                            final Location bLocation = new Location(player.getWorld(), bv.getX(), bv.getY(), bv.getZ());
+                            final Block b = bLocation.getBlock();
+                            if (b.getType() == Material.WOOL && b.getData() == (byte) 11)
+                                b.setData((byte) 4);
+                        }
+                        player.sendMessage("Plot created!");
+                        return true;
                     }
                     case "addtry": {
-                        // player
+                        if (args.length < 2)
+                            return false;
+                        final Player target = getPlayer(args[1]);
+                        if (target != null) {
+                            final int tries = permission.addTry(player);
+                            player.sendMessage(ChatColor.YELLOW + player.getName() + " has now taken " + tries + " attempt(s) at submissions.");
+                            return true;
+                        }
+                        final int tries = permission.addTry(args[1]);
+                        player.sendMessage(ChatColor.YELLOW + args[1] + " has now taken " + tries + " attempt(s) at submissions.");
+                        return true;
                     }
                     case "gettry": {
-                        // player
+                        if (args.length < 2)
+                            return false;
+                        final Player target = getPlayer(args[1]);
+                        if (target != null) {
+                            final int tries = permission.getTry(target);
+                            player.sendMessage(ChatColor.YELLOW + target.getName() + " has taken " + tries + " attempt(s) at submissions.");
+                            return true;
+                        }
+                        final int tries = permission.getTry(args[1]);
+                        player.sendMessage(ChatColor.YELLOW + args[1] + " has taken " + tries + " attempt(s) at submissions.");
+                        return true;
                     }
                     case "expires": {
-                        // player
+                        if (args.length < 2)
+                            return false;
+                        final Player target = getPlayer(args[1]);
+                        if (target != null) {
+                            player.sendMessage(ChatColor.YELLOW + target.getName() + "'s submission time expires at " + permission.getTimeStampRemaning(player));
+                            return true;
+                        }
+                        player.sendMessage(ChatColor.YELLOW + args[1] + "'s submission time expires at " + permission.getTimeStampRemaning(args[1]));
+                        return true;
                     }
                     case "timeleft": {
-                        // player
+                        if (args.length < 2)
+                            return false;
+                        final Player target = getPlayer(args[1]);
+                        if (target != null) {
+                            player.sendMessage(ChatColor.YELLOW + target.getName() + "'s submission time expires at " + permission.getFriendlyTimeRemaning(player));
+                            return true;
+                        }
+                        player.sendMessage(ChatColor.YELLOW + args[1] + "'s submission time expires at " + permission.getFriendlyTimeRemaning(args[1]));
+                        return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    private String getStringFromLocation(Location loc) {
+        return "(" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")";
+    }
+
+    @SuppressWarnings("deprecation")
+    private Player getPlayer(final String name) {
+        Player possibleplayer;
+        for (final Player loopPlayer : Bukkit.getOnlinePlayers())
+            if (loopPlayer.getName().equalsIgnoreCase(name))
+                return loopPlayer;
+        possibleplayer = Bukkit.getPlayerExact(name);
+        if (possibleplayer != null)
+            return possibleplayer;
+        possibleplayer = Bukkit.getPlayer(name);
+        if (possibleplayer != null)
+            return possibleplayer;
+        return null;
+    }
+
+    private void setWorldEditSelection(final Player ply, final Plot plot) {
+        final org.bukkit.World plotWorld = plotManager.getWorld();
+        SubmissionsPlugin.getWorldEdit().setSelection(ply, new CuboidSelection(plotWorld, plot.getFirstPoint(), plot.getSecondPoint()));
+    }
+
+    private void displayRentInfo(final Player toSend, final Rent rent) {
+        final String plot = rent.getPlot().getName();
+        final Player owner = Bukkit.getPlayer(rent.getOwner());
+        final String created = permission.getTimeStamp(rent.getCreated() / 1000);
+        final String modified = permission.getTimeStamp(rent.getModified() / 1000);
+        final String changes = "" + rent.getChanges();
+        final String playerDisplay = ChatColor.translateAlternateColorCodes('&', permission.getPrefix(owner) + owner.getName() + permission.getSuffix(owner));
+        toSend.sendMessage(String.format(ChatColor.RESET + "%s: %s" + ChatColor.RESET + "(created %s, modified %s, %s changes)", plot, playerDisplay, created, modified, changes));
     }
 
 }

@@ -28,21 +28,31 @@ public class WorldlessCuboid {
         return new Location(world, xMin, yMin, zMin);
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof WorldlessCuboid))
+            return false;
+        final WorldlessCuboid plot = (WorldlessCuboid) obj;
+        if (xMin == plot.xMin && xMax == plot.xMax && yMin == plot.yMin && yMax == plot.yMax && zMin == plot.zMin && zMax == plot.zMax)
+            return true;
+        return false;
+    }
+
     public String getAnchor() {
         return xMin + "," + yMin + "," + zMin;
     }
 
-    public String getSize() {
-        return xMax - xMin + 1 + "x" + (yMax - yMin + 1) + "x" + (zMax - zMin + 1);
-    }
-
     public Location[] getCuboid(final World world) {
-        ArrayList<Location> locations = new ArrayList<Location>(0);
-        for(int y = yMin; y <= yMax; y++) 
-            for(int z = zMin; z <= zMax; z++) 
-                for(int x = xMin; x <= xMax; x++) 
+        final ArrayList<Location> locations = new ArrayList<Location>(0);
+        for (int y = yMin; y <= yMax; y++)
+            for (int z = zMin; z <= zMax; z++)
+                for (int x = xMin; x <= xMax; x++)
                     locations.add(new Location(world, x, y, z));
         return locations.toArray(new Location[0]);
+    }
+
+    public String getSize() {
+        return xMax - xMin + 1 + "x" + (yMax - yMin + 1) + "x" + (zMax - zMin + 1);
     }
 
     public boolean isIn(final Location loc) {
@@ -59,5 +69,10 @@ public class WorldlessCuboid {
         if (loc.getBlockZ() > zMax)
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "WorldlessCuboid [xMin=" + xMin + ", xMax=" + xMax + ", yMin=" + yMin + ", yMax=" + yMax + ", zMin=" + zMin + ", zMax=" + zMax + "]";
     }
 }
