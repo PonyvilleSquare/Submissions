@@ -52,6 +52,10 @@ public class CommandHandler {
                 if (args.length < 3)
                     return false;
                 final String all_error = ChatColor.DARK_RED + "[FATAL]" + ChatColor.RESET + ChatColor.RED + " Save and remove of submission house aborted. ";
+                if(Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
+                    player.sendMessage(all_error + "FastAsyncWorldEdit is enabled. Saving and Removing of houses cannot be done while this plugin is enabled. Uninstall FastAsyncWorldEdit and try again.");
+                    return true;
+                }
                 final Optional<Rent> oRent = rentManager.getRent(args[0]);
                 if (!oRent.isPresent()) {
                     player.sendMessage(all_error + "I couldn't find a rent for that player!");
