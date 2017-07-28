@@ -33,7 +33,7 @@ public class SubmissionsPlugin extends JavaPlugin {
         }
         permission = new Permission();
         eventListener = new EventListener(this, permission, plotManager, rentManager);
-        commandHandler = new CommandHandler(plotManager, rentManager, permission);
+        commandHandler = new CommandHandler(plotManager, rentManager, permission, settings);
         task = getServer().getScheduler().runTaskTimer(this, () -> {
             plotManager.saveAllPlots();
             rentManager.saveAllRents();

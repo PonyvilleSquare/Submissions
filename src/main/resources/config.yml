@@ -1,3 +1,4 @@
 save: 30
 rentsFile: rents.yml
 plotFile: plots.yml
+schemFolder: /home/minecraft/schematics

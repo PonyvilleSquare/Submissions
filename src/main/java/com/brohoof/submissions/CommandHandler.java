@@ -1,9 +1,11 @@
 package com.brohoof.submissions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.brohoof.submissions.exceptions.PlotCreationException;
+import com.google.common.base.Joiner;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -28,11 +31,13 @@ public class CommandHandler {
     private final PlotManager plotManager;
     private final RentManager rentManager;
     private final Permission permission;
+    private Settings settings;
 
-    public CommandHandler(final PlotManager plotManager, final RentManager rentManager, final Permission permission) {
+    public CommandHandler(final PlotManager plotManager, final RentManager rentManager, final Permission permission, final Settings settings) {
         this.plotManager = plotManager;
         this.rentManager = rentManager;
         this.permission = permission;
+        this.settings = settings;
     }
 
     @SuppressWarnings("deprecation")
@@ -44,7 +49,7 @@ public class CommandHandler {
         final Player player = (Player) sender;
         switch (command.getName().toLowerCase()) {
             case "saveandremove": {
-                if (args.length == 0)
+                if (args.length < 3)
                     return false;
                 final String all_error = ChatColor.DARK_RED + "[FATAL]" + ChatColor.RESET + ChatColor.RED + " Save and remove of submission house aborted. ";
                 final Optional<Rent> oRent = rentManager.getRent(args[0]);
@@ -58,7 +63,70 @@ public class CommandHandler {
                 if (!player.getWorld().equals(plotManager.getWorld())) {
                     player.sendMessage(all_error + "You are not in the submissions world. Please use this command only in the submissions world.");
                 }
-                player.sendMessage("Your current Location is " + player.getLocation().getY());
+                double height = player.getLocation().getY();
+                if (!(height == Math.floor(height) && height == Math.ceil(height))) {
+                    player.sendMessage(all_error + "You are not standing on the ground. Please stand firmly on the ground and try again.");
+                }
+                String folder = args[1];
+                String reason = args[2];
+                String extraNotes = Joiner.on(' ').join(ArrayUtils.subarray(args, 3, args.length));
+                boolean approved;
+                switch (folder.toLowerCase()) {
+                    case "approved": {
+                        approved = true;
+                        break;
+                    }
+                    case "rejected": {
+                        approved = false;
+                        break;
+                    }
+                    default: {
+                        player.sendMessage(all_error + "You did not specify to approve or reject!");
+                        return true;
+                    }
+                }
+                if (approved)
+                    player.sendMessage("Saving and removing approved house...");
+                else
+                    player.sendMessage("Saving and removing rejected house...");
+                String fileNameToSave = "";
+                File schemRootDir = null;
+                if (approved) {
+                    schemRootDir = new File(settings.getSchemFile(), "approved");
+                    fileNameToSave = "approved";
+                } else {
+                    schemRootDir = new File(settings.getSchemFile(), "rejected");
+                    fileNameToSave = "rejected";
+                }
+                String cmc = rent.getOwnerName().toLowerCase();
+                File schematicToSave;
+                String schemName;
+                try {
+                    for (int i = 0;; i++) {
+                        if (i == 0) {
+                            schematicToSave = new File(schemRootDir, cmc + ".schematic");
+                            schemName = cmc + ".schematic";
+                        } else {
+                            schematicToSave = new File(schemRootDir, cmc + "-" + i + ".schematic");
+                            schemName = cmc + "-" + i + ".schematic";
+                        }
+                        if (!schematicToSave.exists())
+                            break;
+                    }
+                } catch (SecurityException ex) {
+                    player.sendMessage(all_error + "An unhandled security exception occured when trying to read a schematic file, please check and save manually.");
+                    ex.printStackTrace();
+                    return true;
+                }
+                fileNameToSave = fileNameToSave + "/" + schemName;
+                Bukkit.dispatchCommand(player, "/copy");
+                Bukkit.dispatchCommand(player, "/schematic save mce " + fileNameToSave);
+                Bukkit.dispatchCommand(player, "mcprofiler addnote " + cmc + " Removed "+ reason + " house at " + this.getStringFromLocation(player.getLocation()) + ", and saved as " + fileNameToSave + ". " + extraNotes);
+                Bukkit.dispatchCommand(player, "/restore " + plotManager.getWorld().getName() + "/fresh");
+                Bukkit.dispatchCommand(player, "/sel");
+                Bukkit.dispatchCommand(player, "remove items 100");
+                player.sendMessage("Save and remove complete.");
+                rentManager.removeRent(rent);
                 return true;
             }
             case "subm": {
@@ -207,6 +275,21 @@ public class CommandHandler {
                         }
                         final Rent rent = or.get();
                         rentManager.removeRent(rent);
+                        return true;
+                    }
+                    case "selectowner": {
+                        if (args.length <= 1) {
+                            player.sendMessage("You must specify a player!");
+                            return true;
+                        }
+                        final String rentOwner = args[1];
+                        final Optional<Rent> or = rentManager.getRent(rentOwner);
+                        if (!or.isPresent()) {
+                            player.sendMessage("Player does not have a plot!");
+                            return true;
+                        }
+                        final Rent rent = or.get();
+                        this.setWorldEditSelection(player, rent.getPlot());
                         return true;
                     }
                     case "visualize": {

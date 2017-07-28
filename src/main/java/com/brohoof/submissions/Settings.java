@@ -12,6 +12,8 @@ public class Settings {
     private File rentFile;
     private String rentFileName;
     private int saveInterval;
+    private File schemFile;
+    private String schemFileName;
 
     public Settings(final SubmissionsPlugin submissionsPlugin) {
         plugin = submissionsPlugin;
@@ -33,6 +35,14 @@ public class Settings {
     public String getRentFileName() {
         return rentFileName;
     }
+    
+    public File getSchemFile() {
+        return schemFile;
+    }
+    
+    public String getSchemFileName() {
+        return schemFileName;
+    }
 
     public int getSaveInterval() {
         return saveInterval;
@@ -44,6 +54,8 @@ public class Settings {
         plotFileName = config.getString("plotFile");
         plotFile = new File(plugin.getDataFolder(), plotFileName);
         saveInterval = config.getInt("save") * 20 * 60;
+        schemFileName = config.getString("schemFolder");
+        schemFile = new File(schemFileName);
 
     }
 }
