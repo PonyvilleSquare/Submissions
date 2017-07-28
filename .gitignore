@@ -61,7 +61,11 @@ local.properties
 .loadpath
 *.class
 
-#Gradle
+#IntelliJ
+*.iml
 .idea/
+out/
+
+#Gradle
 .gradle/
 build/

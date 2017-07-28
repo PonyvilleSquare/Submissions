@@ -1,29 +1,31 @@
 package com.brohoof.submissions;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Wool;
 
 import com.brohoof.submissions.exceptions.PlotCreationException;
 import com.google.common.base.Joiner;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.world.World;
 
 public class CommandHandler {
@@ -40,7 +42,6 @@ public class CommandHandler {
         this.settings = settings;
     }
 
-    @SuppressWarnings("deprecation")
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("Sorry, this plugin can be used ingame only.");
@@ -144,10 +145,7 @@ public class CommandHandler {
                     }
                     case "list": {
                         player.sendMessage(String.format(ChatColor.YELLOW + "Occupied %s out of %s plots (%s empty)", rentManager.getTotalRents(), plotManager.getTotalPlots(), plotManager.getTotalPlots() - rentManager.getTotalRents()));
-                        final ArrayList<Rent> rents = rentManager.getRents();
-                        Collections.sort(rents);
-                        Collections.reverse(rents);
-                        for (final Rent rent : rents)
+                        for (final Rent rent : rentManager.getRents())
                             displayRentInfo(player, rent);
                         return true;
                     }
@@ -155,9 +153,7 @@ public class CommandHandler {
                         final int occupied = rentManager.getTotalRents();
                         final int numPlots = plotManager.getTotalPlots();
                         player.sendMessage(String.format(ChatColor.YELLOW + "Occupied %s out of %s open plots (%s empty)", occupied, numPlots, numPlots - occupied));
-                        final ArrayList<Plot> plots = plotManager.getPlots();
-                        Collections.sort(plots);
-                        for (final Plot plot : plots) {
+                        for (final Plot plot : plotManager.getPlots()) {
                             final Optional<Rent> rent = rentManager.getRent(plot);
                             if (rent.isPresent())
                                 displayRentInfo(player, rent.get());
@@ -309,8 +305,10 @@ public class CommandHandler {
                             return true;
                         }
                         final Optional<Plot> oplot = plotManager.getPlot(args[2]);
-                        if (!oplot.isPresent())
+                        if (!oplot.isPresent()) {
                             player.sendMessage("Invalid plot specified.");
+                            return true;
+                        }
                         final Plot plot = oplot.get();
                         final Optional<Rent> orent = rentManager.getRent(plot);
                         if (orent.isPresent()) {
@@ -342,9 +340,9 @@ public class CommandHandler {
                         }
                         for (final BlockVector bv : re) {
                             final Location bLocation = new Location(player.getWorld(), bv.getX(), bv.getY(), bv.getZ());
-                            final Block b = bLocation.getBlock();
-                            if (b.getType() == Material.WOOL && b.getData() == (byte) 11)
-                                b.setData((byte) 4);
+                            final BlockState b = bLocation.getBlock().getState();
+                            if (b.getType() == Material.WOOL && ((Wool) b.getData()).getColor() == DyeColor.BLUE)
+                                ((Wool) b.getData()).setColor(DyeColor.YELLOW);
                         }
                         player.sendMessage("Plot created!");
                         return true;
@@ -424,11 +422,17 @@ public class CommandHandler {
 
     private Optional<Region> getWorldEditSelection(final Player player) {
         final WorldEditPlugin we = SubmissionsPlugin.getWorldEdit();
-        try {
-            return Optional.<Region>ofNullable(we.getWorldEdit().getSessionManager().getIfPresent(new BukkitPlayer(we, we.getServerInterface(), player)).getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld())).getRegion());
-        } catch (final Exception e) {
-            return Optional.<Region>empty();
+        BukkitPlayer bp = new BukkitPlayer(we, we.getServerInterface(), player);
+        LocalSession session = we.getWorldEdit().getSessionManager().getIfPresent(bp);
+        if (session != null) {
+            RegionSelector selector = session.getRegionSelector((World) BukkitUtil.getLocalWorld(player.getWorld()));
+            try {
+                return Optional.of(selector.getRegion());
+            } catch (final Exception e) {
+                // incomplete region
+            }
         }
+        return Optional.empty();
     }
 
     private void setWorldEditSelection(final Player ply, final Plot plot) {
