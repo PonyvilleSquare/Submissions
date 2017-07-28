@@ -128,11 +128,4 @@ public class PlotManager {
             plots.add(plot);
         return plots;
     }
-    
-    public void dumpPlots() {
-        plugin.getLogger().info("PLOT INFORMATION.");
-        for(Entry<String, Plot> plot : plots.entrySet()) {
-            plugin.getLogger().info("String = " + plot.getKey() + ", Plot = " + plot.getValue().toString());
-        }
-    }
 }

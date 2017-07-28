@@ -138,12 +138,6 @@ public class CommandHandler {
                         rentManager.saveAllRents();
                         return true;
                     }
-                    case "dump": {
-                        plotManager.dumpPlots();
-                        rentManager.dumpRents();
-                        player.sendMessage("Check console.");
-                        return true;
-                    }
                     case "list": {
                         player.sendMessage(String.format(ChatColor.YELLOW + "Occupied %s out of %s plots (%s empty)", rentManager.getTotalRents(), plotManager.getTotalPlots(), plotManager.getTotalPlots() - rentManager.getTotalRents()));
                         final ArrayList<Rent> rents = rentManager.getRents();
@@ -160,7 +154,6 @@ public class CommandHandler {
                         final ArrayList<Plot> plots = plotManager.getPlots();
                         Collections.sort(plots);
                         for (final Plot plot : plots) {
-                            player.sendMessage("Plot number is " + plot.getName());
                             final Optional<Rent> rent = rentManager.getRent(plot);
                             if (rent.isPresent())
                                 displayRentInfo(player, rent.get());

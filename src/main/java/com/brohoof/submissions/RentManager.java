@@ -115,16 +115,6 @@ public class RentManager {
         }
     }
 
-    public void dumpRents() {
-        plugin.getLogger().info("RENT INFORMATION.");
-        for (Entry<UUID, Rent> rent : rents.entrySet()) {
-            plugin.getLogger().info("UUID = " + rent.getKey().toString() + ", Rent = " + rent.getValue().toString());
-        }
-        for (Entry<String, UUID> player : this.playerNames.entrySet()) {
-            plugin.getLogger().info("String = " + player.getKey() + ", UUID = " + player.getValue().toString());
-        }
-    }
-
     public int getTotalRents() {
         return rents.size();
     }

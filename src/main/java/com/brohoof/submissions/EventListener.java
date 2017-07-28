@@ -147,11 +147,8 @@ public class EventListener implements Listener {
     }
 
     private boolean proxyEditEvent(final Player player, final Location location) {
-        if (!plotManager.isConcerned(player, location.getWorld())) {
-            // TODO: remove debug
-            player.sendMessage("Not concerned about your event.");
+        if (!plotManager.isConcerned(player, location.getWorld()))
             return false;
-        }
         final Optional<Plot> plot = plotManager.getPlot(location);
         final Optional<Rent> rent = rentManager.getRent(player.getUniqueId());
         if (!plot.isPresent()) {
