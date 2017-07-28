@@ -1,8 +1,8 @@
 package com.brohoof.submissions;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.brohoof.submissions.exceptions.RentLoadingException;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
 
 public class RentManager {
     private final HashMap<String, UUID> playerNames = new HashMap<String, UUID>(0);
@@ -75,11 +76,8 @@ public class RentManager {
         return Optional.<Rent>ofNullable(rents.get(owner));
     }
 
-    public ArrayList<Rent> getRents() {
-        final ArrayList<Rent> rents = new ArrayList<Rent>(this.rents.size());
-        for (final Rent rent : this.rents.values())
-            rents.add(rent);
-        return rents;
+    public List<Rent> getRents() {
+        return ImmutableList.sortedCopyOf(this.rents.values()).reverse();
     }
 
     public void removeRent(final Rent rent) {

@@ -1,8 +1,8 @@
 package com.brohoof.submissions;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import com.brohoof.submissions.exceptions.PlotCreationException;
 import com.brohoof.submissions.exceptions.PlotLoadingException;
+import com.google.common.collect.ImmutableList;
 
 public class PlotManager {
 
@@ -122,10 +123,7 @@ public class PlotManager {
         return plots.size();
     }
 
-    public ArrayList<Plot> getPlots() {
-        final ArrayList<Plot> plots = new ArrayList<Plot>(this.plots.size());
-        for (final Plot plot : this.plots.values())
-            plots.add(plot);
-        return plots;
+    public List<Plot> getPlots() {
+        return ImmutableList.sortedCopyOf(this.plots.values());
     }
 }
